@@ -1,8 +1,6 @@
 package collection;
 
 import com.google.common.collect.Maps;
-import com.google.common.reflect.Reflection;
-import com.sun.deploy.util.ReflectionUtil;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
