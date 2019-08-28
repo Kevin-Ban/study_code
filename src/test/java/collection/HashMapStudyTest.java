@@ -1,17 +1,17 @@
 package collection;
 
 import bean.HashMapBean;
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -34,7 +34,10 @@ public class HashMapStudyTest {
         Map<String, Object> map2 = Maps.newHashMapWithExpectedSize(20);
         assertTrue("map2的容量大于等于20", (Integer) capacity.invoke(map2) >= 20);
 
-        // 创建HashMap，该方法会初始化容量的大小，注意：初始化的容量不一定是用户指定的参数，HashMap方法会计算能装下当前数量且不用扩容的数值
+        // 原生函数默认指定大于等于当前参数的容量，且容量为2的幂次方
+        Map<String, Object> map4 = new HashMap<String, Object>(15);
+        assertTrue("map4的容量为16", (Integer) capacity.invoke(map4) == 16);
+
         Map<String, Object> map3 = new HashMap<String, Object>(20);
         assertTrue("map3的容量大于等于20", (Integer) capacity.invoke(map3) >= 20);
 
@@ -47,7 +50,7 @@ public class HashMapStudyTest {
     public void testImpact() {
         Map<HashMapBean, Object> map = Maps.newHashMapWithExpectedSize(16);
         // HashMapBean作为key时，由于重写了hashCode方法，每次都返回1，所以每次put都会产生碰撞
-        // 小于等与8时，是链表的Node
+        // 小于等与8时，是Node
         for (int i = 0; i <= 8; i++) {
             HashMapBean bean = new HashMapBean(String.valueOf(i));
             map.put(bean, i);
@@ -87,6 +90,27 @@ public class HashMapStudyTest {
             System.out.println("等任务完成");
             // 让出cpu控制权，Thread.yield();也可以实现同样的想过
             Thread.sleep(1000);
+        }
+    }
+
+    @Test
+    public void testGrow() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // 通过反射调用HashMap的私有方法
+        Class clazz = HashMap.class;
+        Method capacity = clazz.getDeclaredMethod("capacity");
+        capacity.setAccessible(true);
+
+        // 当前容量为32
+        Map<Integer, Integer> map = Maps.newHashMapWithExpectedSize(16);
+        for (int i = 1; i <= 30; i++) {
+            map.put(i, i);
+            if (i <= 24) {
+                assertTrue("容量未增长", (Integer) capacity.invoke(map) == 32);
+            }
+            if (i > 24) {
+                assertTrue("容量增长", (Integer) capacity.invoke(map) > 32);
+                assertTrue("容量增长为64", (Integer) capacity.invoke(map) == 64);
+            }
         }
     }
 }
