@@ -113,4 +113,9 @@ public class HashMapStudyTest {
             }
         }
     }
+
+    @Test
+    public void testMap() {
+
+    }
 }
