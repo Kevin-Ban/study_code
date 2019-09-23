@@ -18,9 +18,7 @@ public class LockTest {
 
     @Test
     public void lock1() {
-        synchronized (this){
-
-        }
+        lock.newCondition();
     }
 
 }
