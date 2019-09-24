@@ -13,6 +13,11 @@ public class CommonBean implements Cloneable, Serializable {
 
     private String id;
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     public static void main(String[] args) throws CloneNotSupportedException {
         CommonBean bean = new CommonBean();
         bean.setName("kevin");

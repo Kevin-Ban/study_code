@@ -19,7 +19,17 @@ public class CloneBean implements Cloneable, Serializable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         // 在这里调用父类的clone方法只能实现浅克隆
-        // 如要实现深克隆，需要同时对类里面的所有引用对象进行克隆，并且重新赋值
+        //region 如要实现深克隆，需要同时对类里面的所有引用对象进行克隆，并且重新赋值
+//        CloneBean cloneObject = (CloneBean) super.clone();
+//        if (this.getCommonBean() != null) {
+//            cloneObject.setCommonBean((CommonBean) this.getCommonBean().clone());
+//        } else {
+//            cloneObject.setCommonBean(null);
+//        }
+//        return cloneObject;
+        //endregion
+        //region 浅克隆
         return super.clone();
+        //endregion
     }
 }
