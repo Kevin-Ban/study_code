@@ -3,9 +3,11 @@ package bean;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Data
 @ToString
-public class CommonBean implements Cloneable {
+public class CommonBean implements Cloneable, Serializable {
 
     private String name;
 
